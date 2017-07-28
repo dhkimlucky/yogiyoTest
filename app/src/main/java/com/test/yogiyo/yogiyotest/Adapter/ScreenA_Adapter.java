@@ -2,6 +2,7 @@ package com.test.yogiyo.yogiyotest.Adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,14 +46,14 @@ public class ScreenA_Adapter extends BaseAdapter{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        ViewHolder viewHolder;
+        final ViewHolder viewHolder;
 
         if(inflater == null){
             inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
         if(convertView == null){
-            convertView = inflater.inflate(R.layout.adapter_screen_a, null);
+            convertView = inflater.inflate(R.layout.adapter_screen, null);
 
             viewHolder = new ViewHolder();
             viewHolder.login = (TextView) convertView.findViewById(R.id.login);
@@ -72,6 +73,39 @@ public class ScreenA_Adapter extends BaseAdapter{
 
         imageLoader.get(item.getAva_url(), ImageLoader.getImageListener(viewHolder.ava_image,
                 R.drawable.black_user_symbol, R.drawable.question_sign));
+
+        if(item.isLike()){
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                viewHolder.like_image.setImageDrawable(activity.getResources().getDrawable(R.drawable.like, null));
+            } else {
+                viewHolder.like_image.setImageDrawable(activity.getResources().getDrawable(R.drawable.like));
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                viewHolder.like_image.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlike, null));
+            } else {
+                viewHolder.like_image.setImageDrawable(activity.getResources().getDrawable(R.drawable.unlike));
+            }
+        }
+
+        viewHolder.like_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!item.isLike()){
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        viewHolder.like_image.setImageDrawable(activity.getResources().getDrawable(R.drawable.like, null));
+                    } else {
+                        viewHolder.like_image.setImageDrawable(activity.getResources().getDrawable(R.drawable.like));
+                    }
+                    item.setLike(true);
+
+                    if(App.getInstance().getLikedUserData() != null){
+                        App.getInstance().getLikedUserData().add(item);
+                    }
+                }
+            }
+        });
 
         return convertView;
     }

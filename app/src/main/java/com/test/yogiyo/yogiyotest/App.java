@@ -1,6 +1,9 @@
 package com.test.yogiyo.yogiyotest;
 
 import android.app.Application;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -18,8 +21,9 @@ public class App extends Application {
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
     private static App mInstance;
-    private static List<UserData> userDataList;
+    private  List<UserData> userDataList, likedUserList;
     public static String GITHUBUSER = "https://api.github.com/search/users?q=";
+    public long totalCount = 0;
 
     @Override
     public void onCreate() {
@@ -27,7 +31,8 @@ public class App extends Application {
 
         mInstance = this;
 
-        userDataList = new ArrayList<UserData>();
+        userDataList = new ArrayList<>();
+        likedUserList = new ArrayList<>();
     }
 
     public static synchronized App getInstance(){
@@ -43,8 +48,12 @@ public class App extends Application {
         return this.mImageLoader;
     }
 
-    public synchronized List getUserData(){
+    public List getUserData(){
         return userDataList;
+    }
+
+    public List getLikedUserData(){
+        return likedUserList;
     }
 
     public RequestQueue getRequestQueue() {
@@ -57,5 +66,14 @@ public class App extends Application {
     public <T> void addToRequestQueue(Request<T> req){
         req.setTag(TAG);
         getRequestQueue().add(req);
+    }
+
+    public boolean isConnected(){
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if(netInfo != null && netInfo.isConnectedOrConnecting()){
+            return  true;
+        }
+        return false;
     }
 }

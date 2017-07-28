@@ -1,24 +1,30 @@
 package com.test.yogiyo.yogiyotest.Model;
 
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class UserData {
 
     private String login;
-    private long id;
     private String ava_url;
-    private boolean like;
+    private long id;
+    private boolean like = false;
 
     public UserData(JSONObject jsonObject) {
         try {
             this.setLogin(jsonObject.getString("login"));
             this.setId(jsonObject.getLong("id"));
             this.setAva_url(jsonObject.getString("avatar_url"));
-        }catch (JSONException e ){
-            e.printStackTrace();
+
+        } catch (JSONException e ){
+            Log.e("UserData", "Could not parse malformed JSON: \"" + jsonObject.toString() + "\"");
+        } finally {
+            Log.d("UserData", jsonObject.toString());
         }
+
     }
 
     public String getLogin() {
